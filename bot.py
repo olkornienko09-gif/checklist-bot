@@ -20,15 +20,20 @@ def build_checklist(data):
     text_lines = ["📋 *Чеклист*\n"]
     keyboard = []
     for i, item in enumerate(data["items"]):
-        text_lines.append(f"{i+1}. {item['title']}")
-        row = []
+        line = f"{i+1}. {item['title']}"
         for slot in ["user1", "user2"]:
             checked = item["checks"].get(slot, False)
             user_name = data["users"].get(slot, slot)
             icon = "✅" if checked else "⬜"
-            label = f"{icon} {user_name}"
-            row.append(InlineKeyboardButton(label, callback_data=f"check|{i}|{slot}"))
+            line += f"   {icon} {user_name}"
+        text_lines.append(line)
+
+        row = []
+        for slot in ["user1", "user2"]:
+            user_name = data["users"].get(slot, slot)
+            row.append(InlineKeyboardButton(f"{i+1}: {user_name}", callback_data=f"check|{i}|{slot}"))
         keyboard.append(row)
+
     keyboard.append([
         InlineKeyboardButton("➕ Добавить задачу", callback_data="add_item"),
         InlineKeyboardButton("✏️ Изменить задачу", callback_data="edit_item"),

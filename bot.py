@@ -3,7 +3,7 @@ import os
 from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
 from telegram.ext import ApplicationBuilder, CommandHandler, CallbackQueryHandler, ContextTypes, MessageHandler, filters
 
-TOKEN = os.environ.get("BOT_TOKEN")
+TOKEN = os.environ.get("8635843464:AAHvWZBpyvfxhbVYqGX1GAv4fAcw5cZWy4w")
 DATA_FILE = "checklist.json"
 
 def load_data():
@@ -19,20 +19,19 @@ def save_data(data):
 def build_checklist(data):
     text_lines = ["📋 *Чеклист*\n"]
     keyboard = []
-    for i, item in enumerate(data["items"]):
-        line = f"{i+1}. {item['title']}"
-        for slot in ["user1", "user2"]:
-            checked = item["checks"].get(slot, False)
-            user_name = data["users"].get(slot, slot)
-            icon = "✅" if checked else "⬜"
-            line += f"   {icon} {user_name}"
-        text_lines.append(line)
 
-        row = []
-        for slot in ["user1", "user2"]:
-            user_name = data["users"].get(slot, slot)
-            row.append(InlineKeyboardButton(f"{i+1}: {user_name}", callback_data=f"check|{i}|{slot}"))
-        keyboard.append(row)
+    for i, item in enumerate(data["items"]):
+        text_lines.append(f"{i+1}. {item['title']}")
+
+        u1 = data["users"].get("user1", "Пользователь 1")
+        u2 = data["users"].get("user2", "Пользователь 2")
+        c1 = "✅" if item["checks"].get("user1", False) else "⬜"
+        c2 = "✅" if item["checks"].get("user2", False) else "⬜"
+
+        keyboard.append([
+            InlineKeyboardButton(f"{c1} {u1}", callback_data=f"check|{i}|user1"),
+            InlineKeyboardButton(f"{c2} {u2}", callback_data=f"check|{i}|user2"),
+        ])
 
     keyboard.append([
         InlineKeyboardButton("➕ Добавить задачу", callback_data="add_item"),
@@ -42,6 +41,7 @@ def build_checklist(data):
         InlineKeyboardButton("🗑 Удалить задачу", callback_data="delete_item"),
         InlineKeyboardButton("👤 Изменить имена", callback_data="set_names"),
     ])
+
     return "\n".join(text_lines), InlineKeyboardMarkup(keyboard)
 
 async def update_message(context, data):

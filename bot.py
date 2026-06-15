@@ -3,7 +3,7 @@ import os
 from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
 from telegram.ext import ApplicationBuilder, CommandHandler, CallbackQueryHandler, ContextTypes, MessageHandler, filters
 
-TOKEN = os.environ.get("8635843464:AAHvWZBpyvfxhbVYqGX1GAv4fAcw5cZWy4w")
+TOKEN = os.environ.get("BOT_TOKEN")
 DATA_FILE = "checklist.json"
 
 def load_data():

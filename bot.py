@@ -23,7 +23,7 @@ def build_checklist(data):
         u2 = data["users"].get("user2", "Пользователь 2")
         c1 = "✅" if item["checks"].get("user1", False) else "⬜"
         c2 = "✅" if item["checks"].get("user2", False) else "⬜"
-        keyboard.append([InlineKeyboardButton(f"{i+1}. {item['title']}", callback_data="noop")])
+        keyboard.append([InlineKeyboardButton(f"📌 {i+1}. {item['title']}", callback_data="noop")])
         keyboard.append([
             InlineKeyboardButton(f"{c1} {u1}", callback_data=f"check|{i}|user1"),
             InlineKeyboardButton(f"{c2} {u2}", callback_data=f"check|{i}|user2"),

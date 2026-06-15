@@ -17,17 +17,17 @@ def save_data(data):
         json.dump(data, f, ensure_ascii=False, indent=2)
 
 def build_checklist(data):
-    text_lines = ["📋 *Чеклист*\n"]
     keyboard = []
 
     for i, item in enumerate(data["items"]):
-        text_lines.append(f"{i+1}. {item['title']}")
-
         u1 = data["users"].get("user1", "Пользователь 1")
         u2 = data["users"].get("user2", "Пользователь 2")
         c1 = "✅" if item["checks"].get("user1", False) else "⬜"
         c2 = "✅" if item["checks"].get("user2", False) else "⬜"
 
+        keyboard.append([
+            InlineKeyboardButton(f"{i+1}. {item['title']}", callback_data="noop"),
+        ])
         keyboard.append([
             InlineKeyboardButton(f"{c1} {u1}", callback_data=f"check|{i}|user1"),
             InlineKeyboardButton(f"{c2} {u2}", callback_data=f"check|{i}|user2"),
@@ -42,7 +42,8 @@ def build_checklist(data):
         InlineKeyboardButton("👤 Изменить имена", callback_data="set_names"),
     ])
 
-    return "\n".join(text_lines), InlineKeyboardMarkup(keyboard)
+    text = "📋 *Чеклист*"
+    return text, InlineKeyboardMarkup(keyboard)
 
 async def update_message(context, data):
     text, keyboard = build_checklist(data)
@@ -70,7 +71,8 @@ async def button_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await query.answer()
     data = load_data()
     action = query.data
-
+if action == "noop":
+        return
     if action.startswith("check|"):
         _, idx, slot = action.split("|")
         idx = int(idx)
